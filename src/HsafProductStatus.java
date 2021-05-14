@@ -5,28 +5,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-
 /**
  * @author rinaldi
  * 
  */
 public class HsafProductStatus {
 
-	
 	// HSAF SEVERITY
 	private final static String OK_STATUS = "ok";
 	private final static String WARN_STATUS = "warning";
 	private final static String ERROR_STATUS = "error";
-	private final DateFormat df = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss.SSS '('z')'");
+	private final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS '('z')'");
 
 	public static enum HSAF_STATUS {
-		NONE(0, "No Anomalies"), EMPTY_LIST(1, "Empty file list"), GENERATION_INTERRUPT(
-				2, "Operational Chain generation interrupt"), MINIMUM_SIZE(3,
-				"Minimum file size not reached"), FREQUENCY_RATE(4,
-				"Expected generation rate not reached"), TOTAL_EXPECTED(5,
-				"Total number of expected files not reached"), EMPTY_FILE(6,
-				"Empty file generated"), CRITICAL(7, "Critical");
+		NONE(0, "No Anomalies"), EMPTY_LIST(1, "Empty file list"),
+		GENERATION_INTERRUPT(2, "Operational Chain generation interrupt"),
+		MINIMUM_SIZE(3, "Minimum file size not reached"), FREQUENCY_RATE(4, "Expected generation rate not reached"),
+		TOTAL_EXPECTED(5, "Total number of expected files not reached"), EMPTY_FILE(6, "Empty file generated"),
+		CRITICAL(7, "Critical");
 
 		private int code;
 		private String extendedStatus;
@@ -91,32 +87,23 @@ public class HsafProductStatus {
 	/**
 	 * Initializing constructor.
 	 * 
-	 * @param product
-	 *            Product identifier (h1, h2, h3, ...)
-	 * @param processingTime
-	 *            Instant of status calculation
-	 * @param totalExpected
-	 *            Total number of products produced in a day (this value is
-	 *            checked as the minimum number of files in a day)
-	 * @param productionRate
-	 *            Rate in minutes of the production for the particular product,
-	 *            e.g. every 15mins, 1hr (60), 24hr (3600), etc
-	 * @param startTime
-	 *            Start hour of the check window (if startTime=99 && endTime=99
-	 *            check always active)
-	 * @param endTime
-	 *            Stop hour of the check window (if startTime=99 && endTime=99
-	 *            check always active)
-	 * @param dataNum
-	 *            The number of data generated every {@code productionRate}
-	 *            minutes, e.g. 3 files every 1hr
-	 * @param minSize
-	 *            The size of files for the specific product [Bytes], e.g. 50000
-	 *            = 50KB
+	 * @param product        Product identifier (h1, h2, h3, ...)
+	 * @param processingTime Instant of status calculation
+	 * @param totalExpected  Total number of products produced in a day (this value
+	 *                       is checked as the minimum number of files in a day)
+	 * @param productionRate Rate in minutes of the production for the particular
+	 *                       product, e.g. every 15mins, 1hr (60), 24hr (3600), etc
+	 * @param startTime      Start hour of the check window (if startTime=99 &&
+	 *                       endTime=99 check always active)
+	 * @param endTime        Stop hour of the check window (if startTime=99 &&
+	 *                       endTime=99 check always active)
+	 * @param dataNum        The number of data generated every
+	 *                       {@code productionRate} minutes, e.g. 3 files every 1hr
+	 * @param minSize        The size of files for the specific product [Bytes],
+	 *                       e.g. 50000 = 50KB
 	 */
-	public HsafProductStatus(String product, Calendar processingTime,
-			int totalExpected, int productionRate, int startTime, int endTime,
-			int dataNum, int minSize) {
+	public HsafProductStatus(String product, Calendar processingTime, int totalExpected, int productionRate,
+			int startTime, int endTime, int dataNum, int minSize) {
 		this.product = product;
 		this.now = processingTime;
 		this.totalExpected = totalExpected;
@@ -142,21 +129,17 @@ public class HsafProductStatus {
 		// H03A dismissed starting from 11/04/2019
 		// H05A dismissed starting from 11/04/2019
 		if (product.equals(Products.H01)
-				/*|| product.equals(Products.H01B)*/
-				/*|| product.equals(Products.H02)*/
-				|| product.equals(Products.H02B)
-				|| product.equals(Products.H03B)
-				|| product.equals(Products.H04)
-				|| product.equals(Products.H05B) || product.equals(Products.H15)) {
+				/* || product.equals(Products.H01B) */
+				/* || product.equals(Products.H02) */
+				|| product.equals(Products.H02B) || product.equals(Products.H03B) || product.equals(Products.H04)
+				|| product.equals(Products.H05B) || product.equals(Products.H15) || product.equals(Products.H17)
+				|| product.equals(Products.H18)) {
 			cluster = Main.PREP_cl;
-		} else if (product.equals(Products.H10) || product.equals(Products.H11)
-				|| product.equals(Products.H12) || product.equals(Products.H13)) {
+		} else if (product.equals(Products.H10) || product.equals(Products.H11) || product.equals(Products.H12)
+				|| product.equals(Products.H13)) {
 			cluster = Main.SNOW_cl;
-		} else if (product.equals(Products.H08) || product.equals(Products.H14)
-				|| product.equals(Products.H16)
-				|| product.equals(Products.H101)
-				|| product.equals(Products.H102)
-				|| product.equals(Products.H103)) {
+		} else if (product.equals(Products.H08) || product.equals(Products.H14) || product.equals(Products.H16)
+				|| product.equals(Products.H101) || product.equals(Products.H102) || product.equals(Products.H103)) {
 			cluster = Main.SOIL_cl;
 		}
 	}
@@ -177,16 +160,14 @@ public class HsafProductStatus {
 		// !historyProduct.checkAnomalyStatus(HSAF_STATUS.getEnumByCode(i).getStatus());
 		// }
 		prevStatus[HSAF_STATUS.GENERATION_INTERRUPT.getCode()] = !historyProduct
-				.checkAnomalyStatus(HSAF_STATUS.GENERATION_INTERRUPT
-						.getStatus());
+				.checkAnomalyStatus(HSAF_STATUS.GENERATION_INTERRUPT.getStatus());
 		prevStatus[HSAF_STATUS.FREQUENCY_RATE.getCode()] = !historyProduct
 				.checkAnomalyStatus(HSAF_STATUS.FREQUENCY_RATE.getStatus());
 		prevStatus[HSAF_STATUS.TOTAL_EXPECTED.getCode()] = !historyProduct
 				.checkAnomalyStatus(HSAF_STATUS.TOTAL_EXPECTED.getStatus());
 	}
 
-	private boolean isGenDateInNoCheckZone(Calendar startCal, Calendar endCal,
-			Calendar generationCal) {
+	private boolean isGenDateInNoCheckZone(Calendar startCal, Calendar endCal, Calendar generationCal) {
 		boolean result = false;
 		DateFormat df = new SimpleDateFormat("HHmmss");
 		String startStr = df.format(startCal.getTime());
@@ -202,8 +183,7 @@ public class HsafProductStatus {
 	}
 
 	// 01 - EMPTY LIST
-	private void checkOnEmptyList(int numberOfFiles, Calendar now,
-			Calendar startCal, Calendar endCal) {
+	private void checkOnEmptyList(int numberOfFiles, Calendar now, Calendar startCal, Calendar endCal) {
 		if (numberOfFiles == 0) {
 			if (isDateToBeChecked == true) {
 				if (now.before(startCal) || now.after(endCal)) {
@@ -214,8 +194,7 @@ public class HsafProductStatus {
 	}
 
 	// 02 - GENERATION INTERRUPT
-	private void checkOnGenerationInterrupt(int numberOfFiles, Calendar now,
-			Calendar startCal, Calendar endCal) {
+	private void checkOnGenerationInterrupt(int numberOfFiles, Calendar now, Calendar startCal, Calendar endCal) {
 		if (numberOfFiles == 0) {
 			if (isDateToBeChecked == true) {
 				if (!(now.before(startCal) || now.after(endCal))) {
@@ -238,8 +217,7 @@ public class HsafProductStatus {
 	}
 
 	// 04 - FREQUENCY RATE
-	private void checkOnFrequencyRate(Calendar now, Calendar startCal,
-			Calendar endCal, Calendar generationCal) {
+	private void checkOnFrequencyRate(Calendar now, Calendar startCal, Calendar endCal, Calendar generationCal) {
 		long nowInMillis = now.getTimeInMillis();
 		long startCalInMillis = startCal.getTimeInMillis();
 		long endCalInMillis = endCal.getTimeInMillis();
@@ -260,17 +238,13 @@ public class HsafProductStatus {
 			if (!(now.after(endCal) || now.before(startCal))) {
 				long diffDays;
 				if (now.get(Calendar.YEAR) > generationCal.get(Calendar.YEAR)) {
-					diffDays = (generationCal
-							.getActualMaximum(Calendar.DAY_OF_YEAR) + now
-							.get(Calendar.DAY_OF_YEAR))
+					diffDays = (generationCal.getActualMaximum(Calendar.DAY_OF_YEAR) + now.get(Calendar.DAY_OF_YEAR))
 							- generationCal.get(Calendar.DAY_OF_YEAR);
 				} else {
-					diffDays = now.get(Calendar.DAY_OF_YEAR)
-							- generationCal.get(Calendar.DAY_OF_YEAR);
+					diffDays = now.get(Calendar.DAY_OF_YEAR) - generationCal.get(Calendar.DAY_OF_YEAR);
 				}
 				long h24InMillis = (24 * 60 * 60 * 1000);
-				long noCheckRangeInMillis = h24InMillis
-						- (endCalInMillis - startCalInMillis);
+				long noCheckRangeInMillis = h24InMillis - (endCalInMillis - startCalInMillis);
 				// if the generation time of the product is within the range of
 				// non-production
 				// the frequency rate must be calculated from "stratCal" and not
@@ -279,8 +253,7 @@ public class HsafProductStatus {
 				if (isGenDateInNoCheckZone(startCal, endCal, generationCal)) {
 					delayInMillis = (nowInMillis - startCalInMillis);
 				} else {
-					delayInMillis = (nowInMillis - generationInMillis)
-							- (diffDays * noCheckRangeInMillis);
+					delayInMillis = (nowInMillis - generationInMillis) - (diffDays * noCheckRangeInMillis);
 				}
 				// IF "now" is outside the check area
 			} else {
@@ -294,13 +267,11 @@ public class HsafProductStatus {
 		long delayMins = delayInMillis / (60 * 1000);
 		if (delayMins > productionRate) {
 			currStatus[HSAF_STATUS.FREQUENCY_RATE.getCode()] = true;
-			DateFormat df = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss.SSS '('z')'");
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS '('z')'");
 			String generationDateStr = df.format(generationCal.getTime());
-			String msg = "Expected generation rate <" + dataNum + "/"
-					+ productionRate + "min> " +
-					// "Observed generation rate <" +dataNum + "/" + delayMins
-					// +"min> " +
+			String msg = "Expected generation rate <" + dataNum + "/" + productionRate + "min> " +
+			// "Observed generation rate <" +dataNum + "/" + delayMins
+			// +"min> " +
 					"Last product generated on <" + generationDateStr + ">";
 			errorStatus[HSAF_STATUS.FREQUENCY_RATE.getCode()] = msg;
 			System.out.println(msg);
@@ -311,8 +282,7 @@ public class HsafProductStatus {
 	private void checkOnTotalExpected(int numberOfFiles) {
 		if (numberOfFiles < totalExpected) {
 			currStatus[HSAF_STATUS.TOTAL_EXPECTED.getCode()] = true;
-			String msg = "Expected products <" + totalExpected + "> "
-					+ "Generated products <" + numberOfFiles + ">";
+			String msg = "Expected products <" + totalExpected + "> " + "Generated products <" + numberOfFiles + ">";
 			errorStatus[HSAF_STATUS.TOTAL_EXPECTED.getCode()] = msg;
 			System.out.println(msg);
 		}
@@ -329,12 +299,12 @@ public class HsafProductStatus {
 	}
 
 	/**
-	 * CheckStatus checks error policies against criteria for each product
-	 * return the processing time
+	 * CheckStatus checks error policies against criteria for each product return
+	 * the processing time
 	 */
 
-	private void computeCurrStatus(String prod, ArrayList<String> files,
-			Date generationDate, ArrayList<String> fileSizes) {
+	private void computeCurrStatus(String prod, ArrayList<String> files, Date generationDate,
+			ArrayList<String> fileSizes) {
 		int numberOfFiles = files.size();
 		Calendar startCal = (Calendar) now.clone();
 		Calendar endCal = (Calendar) now.clone();
@@ -372,8 +342,7 @@ public class HsafProductStatus {
 		checkOnEmptyFile(fileSizes);
 	}
 
-	public HashMap<String, String> checkStatus(String prod,
-			ArrayList<String> files, ArrayList<String> fileSizes) {
+	public HashMap<String, String> checkStatus(String prod, ArrayList<String> files, ArrayList<String> fileSizes) {
 		HashMap<String, String> status = new HashMap<String, String>();
 		status.put("status", OK_STATUS);
 		status.put("value", HSAF_STATUS.NONE.getStatus());
@@ -381,11 +350,10 @@ public class HsafProductStatus {
 		Date generationDate = null;
 		if (files.size() - dataNum >= 0) {
 			String line = files.get(files.size() - dataNum);
-			ProductReport productReport = ProductReportParser.parseReport(prod,
-					line);
+			ProductReport productReport = ProductReportParser.parseReport(prod, line);
 			generationDate = productReport.getGenerationTime();
 		}
-		
+
 		computeCurrStatus(prod, files, generationDate, fileSizes);
 		// EXIT WITH A SINGLE ERROR - ERROR HIERARCHY:
 		//
@@ -425,7 +393,7 @@ public class HsafProductStatus {
 			status.put("status", OK_STATUS);
 			status.put("value", HSAF_STATUS.NONE.getStatus());
 		}
-		
+
 		boolean emailOnGenerationInterrupt = false;
 		boolean emailOnFrequencyRate = false;
 		boolean emailOnTotalExpected = false;
@@ -438,41 +406,23 @@ public class HsafProductStatus {
 			emailOnTotalExpected = updateHistoryFile(HSAF_STATUS.TOTAL_EXPECTED);
 		}
 		// SEND EMAIL TO WORN THE END USER
-		if (emailOnGenerationInterrupt || emailOnFrequencyRate
-				|| emailOnTotalExpected) {
+		if (emailOnGenerationInterrupt || emailOnFrequencyRate || emailOnTotalExpected) {
 			String alarmReport = "";
 			int errorCode = Integer.parseInt(status.get("value"));
 			// EMAIL WITH CRITICAL ERROR
 			if (status.get("critical").equals("yes")) {
 				alarmReport = "This is an automatic email notification - please do not reply to this message. \r\n"
-						+ "\r\n"
-						+ "H-SAF Monitoring tool has found the following critical anomaly for the product "
-						+ product
-						+ ": \r\n"
-						+ "\r\n"
-						+ "- "
-						+ HSAF_STATUS.FREQUENCY_RATE.getExtendedStatus()
-						+ "\r\n"
-						+ "  "
-						+ errorStatus[HSAF_STATUS.FREQUENCY_RATE.getCode()]
-						+ "\r\n"
-						+ "\r\n"
-						+ "- "
-						+ HSAF_STATUS.TOTAL_EXPECTED.getExtendedStatus()
-						+ "\r\n"
-						+ "  "
+						+ "\r\n" + "H-SAF Monitoring tool has found the following critical anomaly for the product "
+						+ product + ": \r\n" + "\r\n" + "- " + HSAF_STATUS.FREQUENCY_RATE.getExtendedStatus() + "\r\n"
+						+ "  " + errorStatus[HSAF_STATUS.FREQUENCY_RATE.getCode()] + "\r\n" + "\r\n" + "- "
+						+ HSAF_STATUS.TOTAL_EXPECTED.getExtendedStatus() + "\r\n" + "  "
 						+ errorStatus[HSAF_STATUS.TOTAL_EXPECTED.getCode()];
 				// EMAIL WITH SIMPLE ERROR
 			} else {
 				alarmReport = "This is an automatic email notification - please do not reply to this message. \r\n"
-						+ "\r\n"
-						+ "H-SAF Monitoring tool has found the following anomaly for the product "
-						+ product
-						+ ": \r\n"
-						+ "\r\n"
-						+ "- "
-						+ HSAF_STATUS.getExtendedStatusByCode(errorCode)
-						+ "\r\n" + "  " + errorStatus[errorCode];
+						+ "\r\n" + "H-SAF Monitoring tool has found the following anomaly for the product " + product
+						+ ": \r\n" + "\r\n" + "- " + HSAF_STATUS.getExtendedStatusByCode(errorCode) + "\r\n" + "  "
+						+ errorStatus[errorCode];
 			}
 			EmailServer emailServer = new EmailServer();
 			emailServer.sendmailHsaf(prod, alarmReport, cluster);
@@ -485,20 +435,17 @@ public class HsafProductStatus {
 	private boolean updateHistoryFile(HSAF_STATUS status) {
 		boolean result = false;
 		// OPEN ANOMALY on history file
-		if (prevStatus[status.getCode()] == false
-				&& currStatus[status.getCode()] == true) {
+		if (prevStatus[status.getCode()] == false && currStatus[status.getCode()] == true) {
 			result = true;
 			historyProduct.storeAnomaly(status);
 			// CLOSE ANOMALY on history file
-		} else if (prevStatus[status.getCode()] == true
-				&& currStatus[status.getCode()] == false) {
+		} else if (prevStatus[status.getCode()] == true && currStatus[status.getCode()] == false) {
 			result = false;
 			String rowId = historyProduct.getOpenAnomaly(status.getStatus());
 			historyProduct.storeResolutionDate(rowId);
 		} else {
 			result = false;
-			System.out.println("No action on history file for product <" + product
-					+ ">: " + status.getCode() + ";"
+			System.out.println("No action on history file for product <" + product + ">: " + status.getCode() + ";"
 					+ currStatus[status.getCode()]);
 		}
 		return result;
@@ -510,11 +457,9 @@ public class HsafProductStatus {
 		curr.append("CURRENT  STATUS (").append(product).append("): [ ");
 		prev.append("PREVIOUS STATUS (").append(product).append("): [ ");
 		for (int i = 1; i < HSAF_STATUS.values().length; i++) {
-			curr.append(HSAF_STATUS.getEnumByCode(i).getStatus()).append("=")
-					.append(currStatus[i]);
+			curr.append(HSAF_STATUS.getEnumByCode(i).getStatus()).append("=").append(currStatus[i]);
 			curr.append(" ");
-			prev.append(HSAF_STATUS.getEnumByCode(i).getStatus()).append("=")
-					.append(prevStatus[i]);
+			prev.append(HSAF_STATUS.getEnumByCode(i).getStatus()).append("=").append(prevStatus[i]);
 			prev.append(" ");
 		}
 		curr.append("]");
