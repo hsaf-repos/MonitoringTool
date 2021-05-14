@@ -82,11 +82,11 @@ public class Main {
 				updateStatusFile(product,hsafProductStatus, result);
 
 			} catch (Exception e) {
-				System.out.println(e);
+				e.printStackTrace();
 			}
 //			}
 		}
-		System.out.println("--------------- CYCLE DONE ---------------");
+		System.out.println("--------------- "+ new Date() +" CYCLE DONE ---------------");
 	}
 
 	private static void updateStatusFile(String product, HsafProductStatus hsafProductStatus, HashMap<String, String> result) throws IOException {

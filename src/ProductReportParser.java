@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class provides a set of static methods to parse the status report file.
@@ -49,6 +50,7 @@ public class ProductReportParser {
 
             // Check correct line format
             if (tokens.length != FIELDS_NUMBER) {
+            	System.out.println("Wrong line format: Lenght field != " + FIELDS_NUMBER);
                 return null;
             }
 
@@ -69,6 +71,7 @@ public class ProductReportParser {
 
             // Extract Sensing Time
             if (!tokensProductFile[FILE_PRODUCT].equalsIgnoreCase(product)) {
+            	System.out.println("Wrong Token product files: " + product);
                 return null;
             }
             String dateTmp = tokensProductFile[FILE_DATE];
@@ -92,12 +95,17 @@ public class ProductReportParser {
                 // daily product, no time part
                 hour = "00";
             }
-            sensingTime = new SimpleDateFormat("yyyyMMdd HHmmss").parse(year + month + day + " " + hour + mins + secs);
+            sensingTime = new SimpleDateFormat("yyyyMMdd HHmmss",Locale.ENGLISH).parse(year + month + day + " " + hour + mins + secs);
 
             // Extract Generation Time
             String genTmp = year + tokens[GENERATION_MOUTH] + tokens[GENERATION_DAY] + " " + tokens[GENERATION_TIME] + "00";
-            generationTime = new SimpleDateFormat("yyyyMMMdd HH:mmss").parse(genTmp);
+            generationTime = new SimpleDateFormat("yyyyMMMdd HH:mmss",Locale.ENGLISH).parse(genTmp);
+            
+            System.out.println("---- DEBUG genertation Time prodId: " + product + "  genTmp: " + genTmp);
+            
         } catch (Throwable e) {
+        	System.out.println("Exception in parsing report file: " + product);
+        	e.printStackTrace();
             return null;
         }
         return new ProductReport(productFile, generationTime, sensingTime, sizeInBytes, satelliteId, isQualityCheck);
